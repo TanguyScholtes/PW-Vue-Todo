@@ -1,11 +1,16 @@
 #Custom ignore files
 scss
 assets
+.DS_Store
+node_modules/
+dist/
+*.old
 
 # Logs
 logs
 *.log
 npm-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids

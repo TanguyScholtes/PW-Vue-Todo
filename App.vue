@@ -2,21 +2,26 @@
     <div id="app">
         <h1>todos</h1>
 
-        <form v-on:submit.prevent>
+        <form method="" action="" v-on:submit.prevent>
             <input @click="updateAllCompletions( $event )" type="checkbox" v-show="items">
             <input name="label" id="label" type="text" placeholder="What needs to be done ?" v-on:keyup.enter="addTask( $event )">
 
             <ul>
-                <li v-for="( task, k ) in filter">
-                    <input @click="updateCompletion( k, $event )" type="checkbox" :checked="task.completed">
-                    <label v-show="!task.displayLabel" @dblclick="task.displayLabel = true" v-model="task.label" v-bind:class="{ crossed: task.completed }">{{ task.label }}</label>
-                    <input v-show="task.displayLabel" @blur="task.displayLabel = false" @keyup.enter="task.displayLabel = false" v-model="task.label" type="text" :value="task.label">
-                    <span class="deleter" @click="eraseTask( task )">x</span>
-                </li>
+                <task-item v-for="task in filter"
+                    :task="task"
+                    :key="task.timestamp"
+                    @eraseTask="eraseTask( task )">
+                </task-item>
             </ul>
         </form>
 
-        <interface v-show="items" :itemsLeft="itemsLeft" :isCompleted="isCompleted" :display="display" @clearCompleted="clearCompleted" @updateDisplay="updateDisplay( $event )"></interface>
+        <list-interface v-show="items"
+            :itemsLeft="itemsLeft"
+            :isCompleted="isCompleted"
+            :display="display"
+            @clearCompleted="clearCompleted"
+            @updateDisplay="updateDisplay( $event )">
+        </list-interface>
 
         <footer>
             <p>Exercice based on <a href="http://todomvc.com/examples/vue/">Todo MVC Vue.js example</a>.<p>
@@ -26,10 +31,11 @@
 </template>
 
 <script>
-    import Interface from './Interface.vue';
+    import TaskItem from './TaskItem.vue';
+    import ListInterface from './ListInterface.vue';
 
     export default {
-        name: 'app',
+        name: 'App',
         data () {
             return {
                 tasks: [],
@@ -37,45 +43,38 @@
             }
         },
         components: {
-          Interface
+          ListInterface,
+          TaskItem
         },
         methods: {
             updateDisplay( view ) {
+                //Updates "display" according to the string received as argument.
+                //Used by the computed variable "filter" to filter the tasks to display.
                 this.display = view;
             },
             eraseTask ( task ) {
-                var index = this.tasks.indexOf( task );
-                this.tasks.splice( index, 1 );
+                //Removes the received task from the tasks list
+                this.tasks.splice( this.tasks.indexOf( task ), 1 );
             },
             addTask( event ) {
-                var label = event.target.value;
+                //Creates a new task with text given by the user and empties the text input
+                let label = event.target.value;
                 event.target.value = '';
                 this.tasks.push( {
                     label: label,
                     completed: false,
-                    displayLabel: false
+                    displayLabel: false,
+                    timestamp: Date.now().toString()
                 } );
-
-            },
-            updateCompletion( index, event ) {
-                if( event.target.checked == true ){
-                    this.tasks[ index ].completed = true;
-                } else {
-                    this.tasks[ index ].completed = false;
-                }
             },
             updateAllCompletions( event ) {
-                if( event.target.checked == true ){
-                    this.tasks.forEach( function ( task ) {
-                        task.completed = true;
-                    } );
-                } else {
-                    this.tasks.forEach( function ( task ) {
-                        task.completed = false;
-                    } );
-                }
+                //Check or uncheck all tasks according to the checkbox provided for that
+                this.tasks.forEach( function ( task ) {
+                    task.completed = event.target.checked;
+                } );
             },
             clearCompleted() {
+                //Removes all completed/checked tasks from the list
                 this.tasks = this.tasks.filter( function ( task ) {
                     return task.completed == false;
                 } );
@@ -83,19 +82,25 @@
         },
         computed: {
             filter() {
-                console.log( this.display )
-                if( this.display === 'all' ) {
-                    return this.tasks;
-                }
-                if( this.display === 'active' ) {
-                    return this.tasks.filter( function ( task ) {
-                        return task.completed == false;
-                    } );
-                }
-                if( this.display === 'completed' ) {
-                    return this.tasks.filter( function ( task ) {
-                        return task.completed == true;
-                    } );
+                //Returns a filtered list according to what the user wishes to display
+                switch ( this.display ) {
+                    case 'active':
+                        //Display only incompleted/unchecked tasks
+                        return this.tasks.filter( function ( task ) {
+                            return task.completed == false;
+                        } );
+                        [break;]
+                    case 'completed':
+                        //Display only completed/checked tasks
+                        return this.tasks.filter( function ( task ) {
+                            return task.completed == true;
+                        } );
+                        [break;]
+                    case 'all':
+                    default:
+                        //Display all tasks
+                        return this.tasks;
+                        [break;]
                 }
             },
             itemsLeft () {
@@ -140,15 +145,5 @@
 <style lang="scss" scoped>
     footer{
         text-align: center;
-    }
-    .crossed{
-        text-decoration: line-through;
-        color: lightgray;
-    }
-    .deleter{
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        color: #DD4A68;
-        margin-left: 0.5em;
-        font-weight: bold;
     }
 </style>

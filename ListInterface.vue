@@ -12,7 +12,7 @@
 
 <script>
     export default {
-        name: 'interface',
+        name: 'ListInterface',
         props: {
             itemsLeft: {
                 required: true,
