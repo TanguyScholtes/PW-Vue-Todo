@@ -1,64 +1,48 @@
 <template>
-    <div id="app">
-        <h1>Todo List</h1>
+    <div>
+        <todo-list-form></todo-list-form>
 
-        <form
-            method=""
-            action=""
-            @submit.prevent
-        >
-            <input
-                type="checkbox"
-                v-show="tasks.length"
-                v-model="allChecker"
-                @click="updateAllCompletions( $event )"
-            >
-            <input
-                type="text"
-                name="label"
-                id="label"
-                placeholder="What needs to be done ?"
-                @keyup.enter="addTask( $event )"
-            >
-
-            <ul>
-                <app-list-item
-                    v-for="task in filtered"
-                    :key="task.timestamp"
-                    :task="task"
-                    @eraseTask="eraseTask( task )"
+        <ul>
+            <li v-for="task in filtered">
+                <input
+                    type="checkbox"
+                    v-model="task.completed"
                 >
-                </app-list-item>
-            </ul>
-        </form>
-
-        <todo-list-interface
-            v-show="this.tasks.length"
-            :items-left="itemsLeft"
-            :is-completed="isCompleted"
-            :display="display"
-            @clearCompleted="clearCompleted"
-            @updateDisplay="updateDisplay( $event )"
-        >
-    </todo-list-interface>
-
-        <footer>
-            <p>Exercice based on <a href="http://todomvc.com/examples/vue/">Todo MVC Vue.js example</a>.<p>
-            <p>Made by Tanguy Scholtés, 2017.</p>
-        </footer>
+                <label
+                    v-show="!task.displayLabel"
+                    v-model="task.label"
+                    :class="{ crossed: task.completed }"
+                    @dblclick="task.displayLabel = true"
+                >
+                    {{ task.label }}
+                </label>
+                <input
+                    type="text"
+                    v-show="task.displayLabel"
+                    v-model="task.label"
+                    :value="task.label"
+                    @blur="task.displayLabel = false"
+                    @keyup.enter="task.displayLabel = false"
+                >
+                <span
+                    class="deleter"
+                    @click="eraseTask( task )"
+                >
+                    x
+                </span>
+            </li>
+        </ul>
     </div>
 </template>
 
 <script>
-    import AppListItem from './TodoList.vue';
-    import AppListInterface from './TodoListInterface.vue';
+    import TodoListForm from './TodoListForm.vue';
 
     export default {
-        name: 'App',
+        name: 'TodoList',
 
         components: {
-          AppListInterface,
-          AppListItem
+          TodoListForm
         },
 
         data () {
@@ -176,7 +160,14 @@
 </script>
 
 <style lang="scss">
-    footer{
-        text-align: center;
+    .deleter{
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        color: #DD4A68;
+        margin-left: 0.5em;
+        font-weight: bold;
+    }
+    .crossed{
+        text-decoration: line-through;
+        color: lightgray;
     }
 </style>
