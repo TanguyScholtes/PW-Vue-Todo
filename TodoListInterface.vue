@@ -1,28 +1,28 @@
 <template>
     <div>
-        <p>{{ itemsLeft }} items left</p>
+        <p>{{ itemsLeft }} items left to complete</p>
         <div>
             <button
                 :class="{ active: display === 'all' }"
-                @click="changeView( 'all' )"
+                @click="updateDisplay( 'all' )"
             >
                 All
             </button> |
             <button
                 :class="{ active: display === 'active' }"
-                @click="changeView( 'active' )"
+                @click="updateDisplay( 'active' )"
             >
                 Active
             </button> |
             <button
                 :class="{ active: display === 'completed' }"
-                @click="changeView( 'completed' )"
+                @click="updateDisplay( 'completed' )"
             >
                 Completed
             </button> |
             <button
-                v-show="isCompleted"
-                @click="clearCompleted"
+                v-show="areTasksCompleted"
+                @click="clearCompletedTasks"
             >
                 Clear Completed
             </button>
@@ -32,38 +32,25 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+    import { mapMutations } from 'vuex';
+
     export default {
-        name: 'AppListInterface',
+        name: 'TodoListInterface',
 
-        props: {
-            itemsLeft: {
-                required: true,
-                type: Number
-            },
-
-            isCompleted: {
-                required: true,
-                type: Boolean
-            },
-
-            display: {
-                required: true,
-                type: String
-            }
+        computed: {
+            ...mapGetters ( [
+                'areTasksCompleted',
+                'display',
+                'itemsLeft'
+            ] ),
         },
-        
-        methods:{
-            changeView( view ) {
-                //Change hash in URL to display the given view
-                //Then emits that view to update the display variable and the displayed list
-                window.location.hash = view;
-                this.$emit( 'updateDisplay', view );
-            },
 
-            clearCompleted(){
-                //Emits the trigger to clear all completed/checked tasks in the list
-                this.$emit( 'clearCompleted' );
-            }
+        methods:{
+            ...mapMutations ( [
+                'updateDisplay',
+                'clearCompletedTasks'
+            ] ),
         }
     }
 </script>
