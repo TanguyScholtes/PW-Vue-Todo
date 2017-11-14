@@ -18,6 +18,7 @@
                 </label>
                 <input
                     type="text"
+                    v-focus
                     v-show="task.displayLabel"
                     v-model="task.label"
                     :value="task.label"
@@ -47,6 +48,15 @@
           TodoListForm
         },
 
+        directives: {
+            focus: {
+                // définition de la directive
+                inserted: function ( el ) {
+                    el.focus();
+                }
+            }
+        },
+
         computed: {
             ...mapGetters ( [
                 'filteredTasks'
@@ -57,7 +67,7 @@
             deleteTask ( task ) {
                 //Removes the received task from the tasks list
                 this.$store.getters.tasks.splice( this.$store.getters.tasks.indexOf( task ), 1 );
-            },
+            }
         }
     }
 </script>
