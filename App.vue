@@ -4,7 +4,7 @@
 
         <todo-list></todo-list>
 
-        <todo-list-interface v-show="tasks.length"></todo-list-interface>
+        <todo-list-interface class="interface" v-show="tasks.length"></todo-list-interface>
 
         <footer>
             <p>Exercice based on <a href="http://todomvc.com/examples/vue/">Todo MVC Vue.js example</a>.<p>
@@ -47,5 +47,8 @@
 <style lang="scss">
     footer{
         text-align: center;
+    }
+    .interface{
+        position: absolute;
     }
 </style>
