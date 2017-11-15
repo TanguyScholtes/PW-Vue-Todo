@@ -82,19 +82,19 @@
     }
 
     .list-item{
-        transition: all .5s;
+        transition: all .7s;
     }
     .list-move{
-        transition: all .5s;
+        transition: all 1s;
     }
     .list-enter-active, .list-leave-active{
-        transition: opacity .5s;
+        transition: opacity .7s;
     }
     .list-enter, .list-leave-to{
         opacity: 0;
         transform: translateY(30px);
     }
-    .list-complete-leave-active {
+    .list-leave-active {
         position: absolute;
     }
 </style>
