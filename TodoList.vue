@@ -2,37 +2,34 @@
     <div>
         <todo-list-form></todo-list-form>
 
-        <ul>
-            <li v-for="task in filteredTasks">
-                <input
-                    type="checkbox"
-                    v-model="task.completed"
-                >
-                <label
-                    v-show="!task.displayLabel"
+        <transition-group name="list" tag="ul" mode="out-in">
+            <li v-for="task in filteredTasks"
+                :key="task.timestamp"
+                class="list-item">
+                <input type="checkbox"
+                    v-model="task.completed">
+
+                <label v-show="!task.displayLabel"
                     v-model="task.label"
                     :class="{ crossed: task.completed }"
-                    @dblclick="task.displayLabel = true"
-                >
+                    @dblclick="task.displayLabel = true">
                     {{ task.label }}
                 </label>
-                <input
-                    type="text"
+
+                <input type="text"
                     v-focus
                     v-show="task.displayLabel"
                     v-model="task.label"
                     :value="task.label"
                     @blur="task.displayLabel = false"
-                    @keyup.enter="task.displayLabel = false"
-                >
-                <span
-                    class="deleter"
-                    @click="deleteTask( task )"
-                >
+                    @keyup.enter="task.displayLabel = false">
+
+                <span class="deleter"
+                    @click="deleteTask( task )">
                     x
                 </span>
             </li>
-        </ul>
+        </transition-group>
     </div>
 </template>
 
@@ -82,5 +79,22 @@
     .crossed{
         text-decoration: line-through;
         color: lightgray;
+    }
+
+    .list-item{
+        transition: all .5s;
+    }
+    .list-move{
+        transition: all .5s;
+    }
+    .list-enter-active, .list-leave-active{
+        transition: opacity .5s;
+    }
+    .list-enter, .list-leave-to{
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    .list-complete-leave-active {
+        position: absolute;
     }
 </style>
